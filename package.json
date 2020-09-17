@@ -4,11 +4,13 @@
   "description": "Forkify Project",
   "main": "index.js",
   "scripts": {
+    "dev": "webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Simon Scheurer",
   "license": "ISC",
   "devDependencies": {
-    "webpack": "^4.44.1"
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12"
   }
 }
