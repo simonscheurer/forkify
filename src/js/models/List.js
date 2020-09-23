@@ -1,18 +1,27 @@
 import uid from 'uniqid';
 
+const LIST_KEY = 'forkify__shopping-list';
+
 export default class List {
     constructor() {
-        this.items = [];
+        this.items = this.readFromLocalStorage();
     }
 
     addItem(quantity, unit, ingredient) {
-        const item = {
-            id: uid.uniqueid(),
-            quantity,
-            unit,
-            ingredient
-        };
-        this.items.push(item);
+        let item = this.existing(unit, ingredient);
+        if (item) {
+            item.quantity += quantity;
+        }
+        else {
+            item = {
+                id: uid(),
+                quantity,
+                unit,
+                ingredient
+            };
+            this.items.push(item);
+        } 
+        this.persistToLocalStorage();
         return item;
     }
 
@@ -29,6 +38,26 @@ export default class List {
         if (index > -1) {
             const item = this.items[index];
             action(item, index);
+            this.persistToLocalStorage();
         }
+    }
+
+    existing(unit, ingredient) {
+        const index = this.items.findIndex(item => 
+            item.unit === unit && item.ingredient == ingredient);
+        return index > -1 ? this.items[index] : undefined;
+    }
+
+    readFromLocalStorage() {
+        const serializedList = localStorage.getItem(LIST_KEY);
+        if (serializedList) {
+            return JSON.parse(serializedList);
+        }
+        return [];
+    }
+
+    persistToLocalStorage() {
+        const serializedList = JSON.stringify(this.items);
+        localStorage.setItem(LIST_KEY, serializedList);
     }
 }

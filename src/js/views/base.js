@@ -5,7 +5,7 @@ export const elements = {
     searchResultsContainer: document.querySelector('.results'),
     searchPaging: document.querySelector('.results__pages'),
     recipeContainer: document.querySelector('.recipe'),
-    shoppintList: document.querySelector('.shopping__list')
+    shoppingList: document.querySelector('.shopping__list'),
     //servings: document.querySelector('.recipe__info-data--people'),
     //servingsButtons: document.querySelector('.recipe__info-buttons'),
 };
@@ -15,6 +15,10 @@ export const elementStrings = {
     pagingButton: 'btn-inline',
     recipeLink: 'results__link',
     servingsButton: 'btn-tiny',
+    shoppingButton: 'recipe__btn--add',
+    deleteListItemButton: 'shopping__delete',
+    changeQuantityInput: 'shopping__count-value',
+    shoppingItem: 'shopping__item'
 };
 
 export const renderLoader = (parent) => {
@@ -37,8 +41,17 @@ export const removeLoaders = () => {
     }
 };
 
-export const select = (clazz, fromParent) => {
+export const select = (clazz, fromElement) => {
     const selector = `.${clazz}`;
-    const root = fromParent ? fromParent : document;
+    const root = fromElement ? fromElement : document;
     return root.querySelector(selector);
-}
+};
+
+export const match = (clazz, element) => {
+    const selector = `.${clazz}, .${clazz} *`;
+    const root = element ? element : document;
+    if (root.matches(selector)) {
+        return element.closest(`.${clazz}`);
+    }
+    return undefined;
+};

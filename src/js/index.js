@@ -1,8 +1,10 @@
 import Search from './models/Search';
 import Recipe from './models/Recipe';
+import List from './models/List';
 import * as viewHelpers from './views/base';
 import * as searchView from './views/searchView';
 import * as recipeView from './views/recipeView';
+import * as listView from './views/listView';
 /* 
 Global state of the app 
 - Search object
@@ -64,7 +66,7 @@ class SearchController {
                 const page = parseInt(button.dataset.page);
                 this.showResults(page);
             }
-        
+            
             /*
             Alternate lookup without closest
 
@@ -75,6 +77,68 @@ class SearchController {
             */
         });
     }
+}
+
+class ListController {
+    constructor(elements) {
+        this.elements = elements;
+    }
+
+    init() {
+        this.addListeners();
+        this.list = new List();
+        this.list.items.forEach(item => listView.renderItem(item));
+    }
+
+    addIngredients(ingredients) {
+        ingredients.forEach(ingredient => {
+            const item = this.list.addItem(ingredient.quantity, ingredient.unit, ingredient.text);
+            listView.renderItem(item);
+        });
+    }
+
+    deleteIngredient(id) {
+        this.list.removeItem(id);
+        listView.deleteItem(id);
+    }
+
+    addListeners() {
+        const deleteClass = viewHelpers.elementStrings.deleteListItemButton;
+        const inputClass = viewHelpers.elementStrings.changeQuantityInput;
+
+        viewHelpers.elements.shoppingList.addEventListener("click", event => {
+            let element = viewHelpers.match(deleteClass, event.target);
+            if (element) {
+                const id = this.getId(element);
+                this.deleteIngredient(id);
+                return;
+            }
+
+            element = viewHelpers.match(inputClass, event.target);
+            if (element) {
+                const id = this.getId(element);
+                const quantity = parseFloat(element.value);
+                this.list.updateItem(id, quantity);
+                return;
+            }
+        });
+
+        /*
+        addEventListener(type, this.controlRecipe);
+        does *not* work. Becuase then 'this' is set to the
+        window object. By defining it explicitly, it's called
+        from the actual context which keeps "this" on the 
+        actual object.
+        */
+
+
+    }
+
+    getId(element) {
+        const parent = element.closest(`.${viewHelpers.elementStrings.shoppingItem}`);
+        return parent.dataset.id;        
+    }
+
 }
 
 class RecipeController {
@@ -124,6 +188,9 @@ class RecipeController {
     }
 
     addListeners() {
+        const servingsClass = viewHelpers.elementStrings.servingsButton;
+        const shoppingClass = viewHelpers.elementStrings.shoppingButton;
+
         /*
         This works as well, but the hashchange is nicer
         and decouples the app better
@@ -146,14 +213,16 @@ class RecipeController {
         }));
 
         viewHelpers.elements.recipeContainer.addEventListener("click", event => {
-            const clazz = `.${viewHelpers.elementStrings.servingsButton}`;
-            if (event.target.matches(`${clazz}, ${clazz} *`)) {
-                const button = event.target.closest(clazz);
-                //console.log(button);
-                if (button) {
-                    const type = button.dataset.type;
-                    this.updateServings(type == "inc");
-                }
+            let button = viewHelpers.match(servingsClass, event.target);
+            if (button) {
+                const type = button.dataset.type;
+                this.updateServings(type == "inc");
+                return;
+            }
+
+            button = viewHelpers.match(shoppingClass, event.target);
+            if (button) {
+                state.listController.addIngredients(this.recipe.ingredients);
             }
         });
 
@@ -164,6 +233,8 @@ class RecipeController {
         from the actual context which keeps "this" on the 
         actual object.
         */
+
+
     }
 }
 
@@ -181,6 +252,11 @@ state.recipeController = new RecipeController({
     link: viewHelpers.elementStrings.recipeLink
 });
 
+state.listController = new ListController({
+
+});
+
 state.searchController.init();
 state.recipeController.init();
+state.listController.init();
 //state.recipeController.showRecipe("a723e8");
