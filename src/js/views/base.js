@@ -3,14 +3,19 @@ export const elements = {
     searchField: document.querySelector('.search__field'),
     searchResultList: document.querySelector('.results__list'),
     searchResultsContainer: document.querySelector('.results'),
-    searchPaging: document.querySelector('.results__pages')
+    searchPaging: document.querySelector('.results__pages'),
+    recipeContainer: document.querySelector('.recipe'),
+    //servings: document.querySelector('.recipe__info-data--people'),
+    //servingsButtons: document.querySelector('.recipe__info-buttons'),
 };
 
 export const elementStrings = {
     loader: 'loader',
     pagingButton: 'btn-inline',
-    recipeLink: 'results__link'
-}
+    recipeLink: 'results__link',
+    servings: 'recipe__info-data--people',
+    servingsButton: 'btn-tiny'
+};
 
 export const renderLoader = (parent) => {
     // Infinitely rotating svg - check CSS for details

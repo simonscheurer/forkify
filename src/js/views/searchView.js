@@ -1,11 +1,26 @@
 import { elements, elementStrings } from './base';
 
 const ITEMS_PER_PAGE = 10;
+let currentId = false;
 
 export const getInput = () => elements.searchField.value;
 
 export const clearInput = () => {
     elements.searchField.value = "";
+};
+
+export const highlightSelected = (id) => {
+    const highlightClass = "results__link--active";
+    const select = item => document.querySelector(`a[href="#${item}"]`);
+
+    if (currentId) {
+        select(currentId).classList.remove(highlightClass);
+    }
+    const selected = select(id);
+    if (selected) {
+        selected.classList.add("results__link--active");
+        currentId = id;
+    }
 };
 
 export const clearResults = () => {

@@ -97,11 +97,30 @@ class RecipeController {
         }
     }
 
+    async updateServings(increase) {
+        if (!this.recipe) return;
+
+        let servings = increase ?
+            this.model.increaseServings() :
+            this.model.decreaseServings();
+
+        this.recipe = await this.model.getRecipe();
+        recipeView.clearRecipe();
+        recipeView.renderRecipe(this.recipe);
+    }
+
     async showRecipe(id) {
-        const recipe = new Recipe(id);
-        this.details = await recipe.getRecipe();
-        if (this.details) {
-            console.log(this.details.ingredients);
+        this.model = new Recipe(id);
+        recipeView.clearRecipe();
+        viewHelpers.renderLoader(this.elements.container);
+
+        this.recipe = await this.model.getRecipe();
+        // console.log("recipe", this.recipe);
+        viewHelpers.removeLoaders();
+        if (this.recipe) {
+            searchView.highlightSelected(id);
+            recipeView.renderRecipe(this.recipe);
+            //console.log(this.recipe.ingredients);
         }
     }
 
@@ -127,6 +146,18 @@ class RecipeController {
             this.controlRecipe();
         }));
 
+        viewHelpers.elements.recipeContainer.addEventListener("click", event => {
+            const clazz = `.${viewHelpers.elementStrings.servingsButton}`;
+            if (event.target.matches(`${clazz}, ${clazz} *`)) {
+                const button = event.target.closest(clazz);
+                //console.log(button);
+                if (button) {
+                    const type = button.dataset.type;
+                    this.updateServings(type == "inc");
+                }
+            }
+        });
+
         /*
         addEventListener(type, this.controlRecipe);
         does *not* work. Becuase then 'this' is set to the
@@ -147,7 +178,7 @@ state.searchController = new SearchController({
 });
 
 state.recipeController = new RecipeController({
-    container: viewHelpers.elements.searchResultsContainer,
+    container: viewHelpers.elements.recipeContainer,
     link: viewHelpers.elementStrings.recipeLink
 });
 
