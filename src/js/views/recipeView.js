@@ -100,7 +100,7 @@ function createIngredientHTML(ingredient) {
             </svg>
             <div class="recipe__count">${formatter.format(ingredient.quantity)}</div>
             <div class="recipe__ingredient">
-                <span class="recipe__unit">${ingredient.measure}</span>
+                <span class="recipe__unit">${ingredient.unit}</span>
                 ${ingredient.text}
             </div>
         </li>`;

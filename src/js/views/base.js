@@ -5,6 +5,7 @@ export const elements = {
     searchResultsContainer: document.querySelector('.results'),
     searchPaging: document.querySelector('.results__pages'),
     recipeContainer: document.querySelector('.recipe'),
+    shoppintList: document.querySelector('.shopping__list')
     //servings: document.querySelector('.recipe__info-data--people'),
     //servingsButtons: document.querySelector('.recipe__info-buttons'),
 };

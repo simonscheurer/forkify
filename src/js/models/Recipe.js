@@ -93,17 +93,17 @@ class IngredientParser {
         };
 
         const quantity = this.parseQuantity(state);
-        const measure  = this.parseMeasure(state);
+        const unit  = this.parseUnit(state);
         const text     = this.parseText(state);
-        const grams   = this.getGrams(measure, quantity);
+        const grams   = this.getGrams(unit, quantity);
 
         return {
             raw: rawIngredient,
             quantity: quantity,
-            measure: measure,
+            unit: unit,
             text: text,
             grams: grams,
-            fullText: this.getFullText(quantity, measure, grams, text)
+            fullText: this.getFullText(quantity, unit, grams, text)
         };
 
         /*
@@ -147,39 +147,39 @@ class IngredientParser {
         return quantity;
     }
     
-    parseMeasure(state) {
-        let measure = state.tokens[state.index].toLowerCase();
-        const validMeasures = Object.keys(this.measures);
-        if (validMeasures.includes(measure)) {
-            measure = this.measures[measure];
+    parseUnit(state) {
+        let unit = state.tokens[state.index].toLowerCase();
+        const validUnits = Object.keys(this.units);
+        if (validUnits.includes(unit)) {
+            unit = this.units[unit];
             state.index++;
         } else {
-            measure = this.measures["default"];
+            unit = this.units["default"];
         }
-        return measure;
+        return unit;
     }
 
     parseText(state) {
         return state.tokens.slice(state.index).join(' ');
     }
 
-    getFullText(quantity, measure, grams, text) {
+    getFullText(quantity, unit, grams, text) {
         if (quantity <= 0) {
             return text;
         }
-        else if (measure === "pkg" || measure === "jar") {
-            return `${formatter.format(quantity)} ${measure} ${text}`;
+        else if (unit === "pkg" || unit === "jar") {
+            return `${formatter.format(quantity)} ${unit} ${text}`;
         } 
-        else if (measure === "pcs") {
+        else if (unit === "pcs") {
             return `${formatter.format(quantity)} ${text}`;
         } 
         else {
-            return `${formatter.format(quantity)} ${measure} (${formatter.format(grams)} g) ${text}`;
+            return `${formatter.format(quantity)} ${unit} (${formatter.format(grams)} g) ${text}`;
         }
     }
 }
 
-IngredientParser.prototype.measures = {
+IngredientParser.prototype.units = {
     oz:         "oz",
     ounce:      "oz",
     ounces:     "oz",
@@ -212,10 +212,10 @@ IngredientParser.prototype.measures = {
     default:    "pcs"
 };
 
-IngredientParser.prototype.getGrams = function(measure, quantity) {
+IngredientParser.prototype.getGrams = function(unit, quantity) {
     const G_PER_OZ = 28.3495;
     
-    switch (measure) {
+    switch (unit) {
         case "oz":
             return quantity * G_PER_OZ;
         case "tbsp":
