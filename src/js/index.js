@@ -105,8 +105,7 @@ class RecipeController {
             this.model.decreaseServings();
 
         this.recipe = await this.model.getRecipe();
-        recipeView.clearRecipe();
-        recipeView.renderRecipe(this.recipe);
+        recipeView.updateServingsAndIngredients(servings, this.recipe);
     }
 
     async showRecipe(id) {

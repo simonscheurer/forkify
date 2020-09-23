@@ -13,8 +13,7 @@ export const elementStrings = {
     loader: 'loader',
     pagingButton: 'btn-inline',
     recipeLink: 'results__link',
-    servings: 'recipe__info-data--people',
-    servingsButton: 'btn-tiny'
+    servingsButton: 'btn-tiny',
 };
 
 export const renderLoader = (parent) => {
@@ -36,3 +35,9 @@ export const removeLoaders = () => {
         loader.parentElement.removeChild(loader);
     }
 };
+
+export const select = (clazz, fromParent) => {
+    const selector = `.${clazz}`;
+    const root = fromParent ? fromParent : document;
+    return root.querySelector(selector);
+}

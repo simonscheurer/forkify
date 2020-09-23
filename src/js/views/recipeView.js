@@ -1,18 +1,19 @@
-import { elements } from './base';
+import { elements, select } from './base';
 import formatter from './../util/format';
 
 export const clearRecipe = () => {
     elements.recipeContainer.innerHTML = "";
 };
 
-/*
-export const updateServings = servings => {
-    elements.servings.textContent = servings;
-    elements.servingsButtons.dataset.servings = servings;
+export const updateServingsAndIngredients = (servings, recipe) => {
+    select("recipe__info-data--people").textContent = servings;
+    const container = select("recipe__ingredient-list");
+    const html = createIngredientsHTML(recipe.ingredients);
+    container.innerHTML = "";
+    container.insertAdjacentHTML("beforeend", html);
 };
-*/
 
-export const renderRecipe = (recipe) => {
+export const renderRecipe = recipe => {
     const markup = `
         <figure class="recipe__fig">
             <img src="${recipe.image}" alt="${recipe.title}" class="recipe__img">
@@ -35,7 +36,7 @@ export const renderRecipe = (recipe) => {
                 <span class="recipe__info-data recipe__info-data--people">${recipe.servings}</span>
                 <span class="recipe__info-text"> servings</span>
 
-                <div class="recipe__info-buttons" data-servings="${recipe.servings}">
+                <div class="recipe__info-buttons">
                     <button class="btn-tiny" data-type="dec">
                         <svg>
                             <use href="img/icons.svg#icon-circle-with-minus"></use>
@@ -58,7 +59,7 @@ export const renderRecipe = (recipe) => {
 
         <div class="recipe__ingredients">
             <ul class="recipe__ingredient-list">
-                ${recipe.ingredients.map(ingredient => createIngredient(ingredient)).join('')}
+                ${createIngredientsHTML(recipe.ingredients)}
             </ul>
 
             <button class="btn-small recipe__btn">
@@ -87,7 +88,11 @@ export const renderRecipe = (recipe) => {
    elements.recipeContainer.insertAdjacentHTML("beforeend", markup);
 };
 
-function createIngredient(ingredient) {
+function createIngredientsHTML(ingredients) {
+    return ingredients.map(ingredient => createIngredientHTML(ingredient)).join('');
+}
+
+function createIngredientHTML(ingredient) {
     return `
         <li class="recipe__item">
             <svg class="recipe__icon">
@@ -100,72 +105,3 @@ function createIngredient(ingredient) {
             </div>
         </li>`;
 }
-
-/*
-        <li class="recipe__item">
-            <svg class="recipe__icon">
-                <use href="img/icons.svg#icon-check"></use>
-            </svg>
-            <div class="recipe__count">1000</div>
-            <div class="recipe__ingredient">
-                <span class="recipe__unit">g</span>
-                pasta
-            </div>
-        </li>
-
-        <li class="recipe__item">
-            <svg class="recipe__icon">
-                <use href="img/icons.svg#icon-check"></use>
-            </svg>
-            <div class="recipe__count">1/2</div>
-            <div class="recipe__ingredient">
-                <span class="recipe__unit">cup</span>
-                ricotta cheese
-            </div>
-        </li>
-
-        <li class="recipe__item">
-            <svg class="recipe__icon">
-                <use href="img/icons.svg#icon-check"></use>
-            </svg>
-            <div class="recipe__count">1</div>
-            <div class="recipe__ingredient">
-                <span class="recipe__unit"></span>
-                can of tomatoes, whole or crushed
-            </div>
-        </li>
-
-
-        <li class="recipe__item">
-            <svg class="recipe__icon">
-                <use href="img/icons.svg#icon-check"></use>
-            </svg>
-            <div class="recipe__count">1</div>
-            <div class="recipe__ingredient">
-                <span class="recipe__unit"></span>
-                can tuna packed in olive oil
-            </div>
-        </li>
-
-        <li class="recipe__item">
-            <svg class="recipe__icon">
-                <use href="img/icons.svg#icon-check"></use>
-            </svg>
-            <div class="recipe__count">1/2</div>
-            <div class="recipe__ingredient">
-                <span class="recipe__unit">cup</span>
-                grated parmesan cheese
-            </div>
-        </li>
-
-        <li class="recipe__item">
-            <svg class="recipe__icon">
-                <use href="img/icons.svg#icon-check"></use>
-            </svg>
-            <div class="recipe__count">1/4</div>
-            <div class="recipe__ingredient">
-                <span class="recipe__unit">cup</span>
-                fresh basil, chopped or torn
-            </div>
-        </li>
-*/
