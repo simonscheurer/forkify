@@ -2,6 +2,7 @@ import Search from './models/Search';
 import Recipe from './models/Recipe';
 import * as viewHelpers from './views/base';
 import * as searchView from './views/searchView';
+import * as recipeView from './views/recipeView';
 /* 
 Global state of the app 
 - Search object
@@ -85,11 +86,23 @@ class RecipeController {
         this.addListeners();
     }
 
+    getRecipeId() {
+        return window.location.hash.substring(1);
+    }
+
+    controlRecipe() {
+        const id = this.getRecipeId();
+        if (id) {
+            this.showRecipe(id);
+        }
+    }
+
     async showRecipe(id) {
-        
         const recipe = new Recipe(id);
         this.details = await recipe.getRecipe();
-        console.log(this.details);
+        if (this.details) {
+            console.log(this.details.ingredients);
+        }
     }
 
     addListeners() {
@@ -110,12 +123,17 @@ class RecipeController {
         });
         */
 
-        window.addEventListener('hashchange', event => {
-            const id = window.location.hash.substring(1);
-            if (id) {
-                this.showRecipe(id);
-            }
-        });
+        ['hashchange', 'load'].forEach(type => window.addEventListener(type, () => {
+            this.controlRecipe();
+        }));
+
+        /*
+        addEventListener(type, this.controlRecipe);
+        does *not* work. Becuase then 'this' is set to the
+        window object. By defining it explicitly, it's called
+        from the actual context which keeps "this" on the 
+        actual object.
+        */
     }
 }
 
